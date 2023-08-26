@@ -32,6 +32,10 @@ class FormCriarConta(FlaskForm):
         if email:
             raise ValidationError("Erro! E-mail já utilizado!")
         
+    def validate_senha(self, senha):
+        if len(senha.data) < 8:
+            raise ValidationError("A senha deve ter mais de 8 caracteres")
+        
 class FormAtivos(FlaskForm):
     nome = StringField("Nome", validators=[DataRequired()])
     tipo = SelectField("Tipo",validators=[DataRequired()], 
@@ -46,7 +50,6 @@ class FormAtivos(FlaskForm):
                                     ('Em manutenção','Em manutenção'),
                                     ('Descartado','Descartado')], default='Em uso')
     
-
     proprietario = SelectField("Proprietário", validators=[DataRequired()], choices=[])
     botao_confirmacao = SubmitField("Enviar")
 

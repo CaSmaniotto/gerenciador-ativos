@@ -8,6 +8,14 @@ Cadastrar Proprietário
 
 {% block body %}
 
+<ul>
+    {% for field_errors in form.errors.values() %}
+        {% for error in field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    {% endfor %}
+</ul>
+
 <form method="POST">
     {{ form.csrf_token }}
     <h3>Cadastrar Proprietário</h3>
@@ -18,15 +26,15 @@ Cadastrar Proprietário
     </div>
     <div class="campo">
         {{ form.cpf.label }}
-        {{ form.cpf }}
+        {{ form.cpf(placeholder="Digite o cpf, apenas números...") }}
     </div>
     <div class="campo">
         {{ form.cargo.label }}
-        {{ form.cargo }}
+        {{ form.cargo(placeholder="Digite o cargo...") }}
     </div>
     <div class="campo">
         {{ form.departamento.label }}
-        {{ form.departamento }}
+        {{ form.departamento(placeholder="Digite o departamento...") }}
     </div>
     <div class="btn">
         {{ form.botao_confirmacao }}

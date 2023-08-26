@@ -39,7 +39,7 @@ class Ativo(database.Model):
     id_proprietario = database.Column(database.Integer, database.ForeignKey('proprietario.id'))
 
     def __repr__(self):
-        return '<Ativo {}>'.format(self.id)
+        return (self.nome)
 
     # def __repr__(self):
     #     return (self.nome)

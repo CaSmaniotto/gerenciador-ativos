@@ -11,14 +11,7 @@
     <a href="/proprietario">Cadastrar proprietario</a>
     <a href="/feed">Meu Feed</a>
     <a href="/home">Home</a>
-    
-    <ul>
-        {% for field_errors in form.errors.values() %}
-            {% for error in field_errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        {% endfor %}
-    </ul>
+    <a href="/dashboard">Dashboard</a>
 
     {% with mensagens = get_flashed_messages() %}
     {% if mensagens %}

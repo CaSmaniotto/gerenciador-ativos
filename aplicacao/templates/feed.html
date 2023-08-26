@@ -1,54 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feed</title>
-</head>
-<body>
-    <a href="/logout">Sair</a>
-    <a href="/ativo">Cadastrar Ativo</a>
-    <a href="/proprietario">Cadastrar proprietario</a>
-    <a href="/feed">Meu Feed</a>
-    <a href="/home">Home</a>
+{% extends 'base_perfil.html' %}
 
-    {% with mensagens = get_flashed_messages() %}
-    {% if mensagens %}
+{% block title %}
 
-        {% for msg in mensagens %}
-        <div class="alerta">
-            Alerta! {{ msg }}
-        </div>
-        {% endfor%}
+Feed
 
-    {% endif %}
-    {% endwith %}
+{% endblock %}
 
-    <table>
+{% block body %}
+    <h2>Proprietários Cadastrados</h2>
+    <input type="text" id="propInput" placeholder="Filtrar">
+    <table id="propTable">
         <tr>
-            <th>Proprietários Cadastrados</th>
+            <th>nome</th>
+            <th>cpf</th>
+            <th>cargo</th>
+            <th>departamento</th>
+            <th>ativos</th>
+            <th>Ações</th>
         </tr>
     {% for proprietario in proprietarios %}
         <tr>
             <td>{{proprietario.nome}}</td>
-            <td><a href="{{ url_for('get_item', item_type='proprietario', action='edit', item_id=proprietario.id) }}">Editar proprietario</a></td>
-            <td><a href="{{ url_for('get_item', item_type='proprietario', action='delete', item_id=proprietario.id) }}">Excluir proprietario</a></td>
-
-        
+            <td>{{proprietario.cpf}}</td>
+            <td>{{proprietario.cargo}}</td>
+            <td>{{proprietario.departamento}}</td>
+            <td>{{proprietario.ativos}}</td>
+            
+            <td><a href="{{ url_for('get_item', item_type='proprietario', action='edit', item_id=proprietario.id) }}">Editar</a></td>
+            <td><a href="{{ url_for('get_item', item_type='proprietario', action='delete', item_id=proprietario.id) }}">Excluir</a></td>
         </tr>
     {% endfor %}
     </table>
-    <table>
+
+    <h2>Ativos Cadastrados</h2>
+    <input type="text" id="ativoInput" placeholder="Filtrar">
+    <table id="ativoTable">
         <tr>
-            <th>Ativos Cadastrados</th>
+            <th>nome</th>
+            <th>tipo</th>
+            <th>descricao</th>
+            <th>data_aquisicao</th>
+            <th>data_garantia</th>
+            <th>status</th>
+            <th>proprietario</th>
+            <th>Ações</th>
         </tr>
     {% for ativo in ativos %}
         <tr>
             <td>{{ativo.nome}}</td>
-            <td><a href="{{ url_for('get_item', item_type='ativo', action='edit', item_id=ativo.id) }}">Editar ativo</a></td>
-            <td><a href="{{ url_for('get_item', item_type='ativo', action='delete', item_id=ativo.id) }}">Excluir ativo</a></td>
+            <td>{{ativo.tipo}}</td>
+            <td>{{ativo.descricao}}</td>
+            <td>{{ativo.data_aquisicao.strftime('%d-%m-%Y')}}</td>
+            <td>{{ativo.data_garantia.strftime('%d-%m-%Y')}}</td>
+            <td>{{ativo.status}}</td>
+            <td>{{ativo.proprietario}}</td>
+            <td><a href="{{ url_for('get_item', item_type='ativo', action='edit', item_id=ativo.id) }}">Editar</a></td>
+            <td><a href="{{ url_for('get_item', item_type='ativo', action='delete', item_id=ativo.id) }}">Excluir</a></td>
         </tr>
     {% endfor %}
     </table>
-</body>
-</html>
+    <p id="contador"></p>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+{% endblock %}

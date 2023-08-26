@@ -1,10 +1,11 @@
-from flask import render_template, url_for, redirect, flash, session
+from flask import render_template, url_for, redirect, flash, session, request
 from aplicacao import app, database, bcrypt
 from aplicacao.models import Usuario, Ativo, Proprietario
 from flask_login import login_required, login_user, logout_user, current_user
 from aplicacao.forms import FormLogin, FormCriarConta, FormAtivos, FormProprietario
 from sqlalchemy import asc
-from wtforms.validators import ValidationError
+from sqlalchemy.sql import func
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -59,17 +60,26 @@ def ativo():
     form.proprietario.choices = [(int(prop.id), prop.nome) for prop in proprietarios]
 
     if form.validate_on_submit():
-        ativo = Ativo(nome=form.nome.data,
-                      tipo=form.tipo.data,
-                      descricao=form.descricao.data,
-                      data_aquisicao=form.data_aquisicao.data,
-                      data_garantia=form.data_garantia.data,
-                      status=form.status.data,
-                      id_proprietario=form.proprietario.data)
-        database.session.add(ativo)
-        database.session.commit()
-        flash("ativo criado com sucesso!")
-        return redirect('/feed')
+        ativo = Ativo.query.filter_by(nome=form.nome.data).first()
+
+        if form.data_garantia.data < form.data_aquisicao.data:
+            flash("Data de aquisição inferior a de garantia!")
+            return redirect("/ativo")
+        elif ativo:
+            flash("Nome de ativo já utilizado!")
+            return redirect("/ativo")
+        else:
+            ativo = Ativo(nome=form.nome.data,
+                        tipo=form.tipo.data,
+                        descricao=form.descricao.data,
+                        data_aquisicao=form.data_aquisicao.data,
+                        data_garantia=form.data_garantia.data,
+                        status=form.status.data,
+                        id_proprietario=form.proprietario.data)
+            database.session.add(ativo)
+            database.session.commit()
+            flash("ativo criado com sucesso!")
+            return redirect('/feed')
 
     return render_template("cadastrar_ativo.html", form=form)
 
@@ -126,11 +136,12 @@ def edit_ativo():
     ativo = Ativo.query.get(int(ativo_id))
 
     form_edit = FormAtivos(obj=ativo)
+
+    # Definindo os campos do form
     form_edit.proprietario.choices = [(prop.id, prop.nome) for prop in Proprietario.query.all()]
 
     if form_edit.validate_on_submit():
         # form_edit.populate_obj(ativo)
-
         ativo.nome = form_edit.nome.data
         ativo.tipo =form_edit.tipo.data
         ativo.descricao = form_edit.descricao.data
@@ -142,8 +153,9 @@ def edit_ativo():
         database.session.commit()
         flash("Editado com sucesso!")
         return redirect('/feed')
-
-    return render_template("edit_ativo.html", form=form_edit)
+    elif request.method == 'GET':
+        form_edit.proprietario.data = str(ativo.proprietario.id)
+        return render_template("edit_ativo.html", form=form_edit) 
 
 @app.route("/delete_ativo")
 @login_required
@@ -151,6 +163,7 @@ def delete_ativo():
     ativo = Ativo.query.get(session.get('item_id'))
     database.session.delete(ativo)
     database.session.commit()
+    flash("Ativo excluido com sucesso!")
     return redirect(url_for("feed"))
 
 @app.route("/feed/edit_proprietario", methods=["GET", "POST"])
@@ -182,95 +195,21 @@ def delete_proprietario():
     proprietario = Proprietario.query.get(session.get('item_id'))
     database.session.delete(proprietario)
     database.session.commit()
+    flash("Proprietário excluido com sucesso!")
     return redirect(url_for("feed"))
 
-# @app.route("/get_ativo/<string:action>/<int:ativo_id>")
-# @login_required
-# def get_ativo(action, ativo_id):
-#     session['ativo_id'] = ativo_id
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    dados = {}
+    status_choices = FormAtivos().status.choices
+    for status_value, _ in status_choices:
+        status_count = Ativo.query.filter_by(status=status_value).count()
+        dados[status_value] = status_count
+        # print(f"Status: {status_value}, Contagem: {status_count}")
     
-#     if action == 'edit':
-#         return redirect(url_for("edit_ativo"))
-#     elif action == 'delete':
-#         return redirect(url_for("delete_ativo"))
+    return render_template("dashboard.html", labels=list(dados.keys()), values=list(dados.values()))
 
-# @app.route("/feed/edit_ativo", methods=["GET", "POST"])
-# @login_required
-# def edit_ativo():
-#     ativo_id = session.get('ativo_id')
-#     ativo = Ativo.query.get(int(ativo_id))
-
-#     form_edit = FormAtivos(obj=ativo)
-#     proprietarios = Proprietario.query.all()
-#     form_edit.proprietario.choices = [(int(prop.id), prop.nome) for prop in proprietarios]
-
-#     if form_edit.validate_on_submit():
-
-#         # form_edit.populate_obj(ativo)
-
-#         ativo.nome = form_edit.nome.data
-#         ativo.tipo =form_edit.tipo.data
-#         ativo.descricao = form_edit.descricao.data
-#         ativo.data_aquisicao = form_edit.data_aquisicao.data
-#         ativo.data_garantia = form_edit.data_garantia.data
-#         ativo.status = form_edit.status.data
-#         ativo.id_proprietario = form_edit.proprietario.data
-
-#         database.session.commit()
-#         flash("editado com sucesso!")
-#         return redirect('/feed')
-
-
-#     return render_template("edit_ativo.html", form=form_edit)
-
-# @app.route("/delete_ativo")
-# @login_required
-# def delete_ativo():
-#     ativo = Ativo.query.filter_by(id=int(session.get('ativo_id'))).first()
-#     database.session.delete(ativo)
-#     database.session.commit()
-#     return redirect(url_for("feed"))
-
-# @app.route("/get_proprietario/<string:action>/<int:proprietario_id>")
-# @login_required
-# def get_proprietario(action, proprietario_id):
-#     session['proprietario_id'] = proprietario_id
-    
-#     if action == 'edit':
-#         return redirect(url_for("edit_proprietario"))
-#     elif action == 'delete':
-#         return redirect(url_for("delete_proprietario"))
-
-# @app.route("/feed/edit_proprietario", methods=["GET", "POST"])
-# @login_required
-# def edit_proprietario():
-#     proprietario_id = session.get('proprietario_id')
-#     proprietario = Proprietario.query.get(int(proprietario_id))
-
-#     form_edit = FormProprietario(obj=proprietario)
-
-#     if form_edit.validate_on_submit():
-#         # form_edit.populate_obj(proprietario)
-
-#         proprietario.nome = form_edit.nome.data
-#         proprietario.cpf =form_edit.cpf.data
-#         proprietario.cargo = form_edit.cargo.data
-#         proprietario.departamento = form_edit.departamento.data
-
-#         database.session.commit()
-#         flash("editado com sucesso!")
-#         return redirect('/feed')
-
-
-#     return render_template("edit_proprietario.html", form=form_edit)
-
-# @app.route("/delete_proprietario")
-# @login_required
-# def delete_proprietario():
-#     proprietario = Proprietario.query.filter_by(id=int(session.get('proprietario_id'))).first()
-#     database.session.delete(proprietario)
-#     database.session.commit()
-#     return redirect(url_for("feed"))
 
 @app.route("/logout")
 @login_required
