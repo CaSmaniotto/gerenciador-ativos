@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+<body>
+    <a href="/logout">Sair</a>
+    <a href="/ativo">Cadastrar Ativo</a>
+    <a href="/proprietario">Cadastrar proprietario</a>
+    <a href="/feed">Meu Feed</a>
+    <a href="/home">Home</a>
+
+    {% with mensagens = get_flashed_messages() %}
+    {% if mensagens %}
+
+        {% for msg in mensagens %}
+        <div class="alerta">
+            Alerta! {{ msg }}
+        </div>
+        {% endfor%}
+
+    {% endif %}
+    {% endwith %}
+
+</body>
+</html>

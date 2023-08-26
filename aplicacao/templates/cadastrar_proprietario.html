@@ -1,0 +1,36 @@
+{% extends 'base_perfil.html' %}
+
+{% block title %}
+
+Cadastrar Proprietário
+
+{% endblock %}
+
+{% block body %}
+
+<form method="POST">
+    {{ form.csrf_token }}
+    <h3>Cadastrar Proprietário</h3>
+    
+    <div class="campo">
+        {{ form.nome.label }}
+        {{ form.nome(placeholder="Digite o nome do produto...")}}
+    </div>
+    <div class="campo">
+        {{ form.cpf.label }}
+        {{ form.cpf }}
+    </div>
+    <div class="campo">
+        {{ form.cargo.label }}
+        {{ form.cargo }}
+    </div>
+    <div class="campo">
+        {{ form.departamento.label }}
+        {{ form.departamento }}
+    </div>
+    <div class="btn">
+        {{ form.botao_confirmacao }}
+    </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed</title>
+</head>
+<body>
+    <a href="/logout">Sair</a>
+    <a href="/ativo">Cadastrar Ativo</a>
+    <a href="/proprietario">Cadastrar proprietario</a>
+    <a href="/feed">Meu Feed</a>
+    <a href="/home">Home</a>
+
+    {% with mensagens = get_flashed_messages() %}
+    {% if mensagens %}
+
+        {% for msg in mensagens %}
+        <div class="alerta">
+            Alerta! {{ msg }}
+        </div>
+        {% endfor%}
+
+    {% endif %}
+    {% endwith %}
+
+    <table>
+        <tr>
+            <th>Proprietários Cadastrados</th>
+        </tr>
+    {% for proprietario in proprietarios %}
+        <tr>
+            <td>{{proprietario.nome}}</td>
+            <td><a href="{{ url_for('get_item', item_type='proprietario', action='edit', item_id=proprietario.id) }}">Editar proprietario</a></td>
+            <td><a href="{{ url_for('get_item', item_type='proprietario', action='delete', item_id=proprietario.id) }}">Excluir proprietario</a></td>
+
+        
+        </tr>
+    {% endfor %}
+    </table>
+    <table>
+        <tr>
+            <th>Ativos Cadastrados</th>
+        </tr>
+    {% for ativo in ativos %}
+        <tr>
+            <td>{{ativo.nome}}</td>
+            <td><a href="{{ url_for('get_item', item_type='ativo', action='edit', item_id=ativo.id) }}">Editar ativo</a></td>
+            <td><a href="{{ url_for('get_item', item_type='ativo', action='delete', item_id=ativo.id) }}">Excluir ativo</a></td>
+        </tr>
+    {% endfor %}
+    </table>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{% extends 'base_perfil.html' %}
+
+{% block title %}
+
+Solicitação
+
+{% endblock %}
+
+{% block body %}
+
+<h1>Olá {{current_user}}</h1>
+
+<form method="POST">
+    {{ form.csrf_token }}
+    <h3>Gerar Solicitação</h3>
+    
+    <div class="campo">
+        {{ form.descricao.label }}
+        {{ form.descricao(placeholder="Breve descrição...")}}
+    </div>
+    <div class="campo">
+        {{ form.quantidade.label }}
+        {{ form.quantidade(placeholder="Digite a quantia...") }}
+    </div>
+    <div class="campo">
+        {{ form.equipamento.label }}
+        {{ form.equipamento }}
+    </div>
+    <div class="btn">
+        {{ form.botao_confirmacao }}
+    </div>
+</form>
+
+{% endblock %}

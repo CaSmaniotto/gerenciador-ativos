@@ -1,0 +1,48 @@
+{% extends 'base_perfil.html' %}
+
+{% block title %}
+
+Edit - Ativo
+
+{% endblock %}
+
+{% block body %}
+
+<form method="POST">
+    {{ form.csrf_token }}
+    <h3>Editar Ativo</h3>
+    
+    <div class="campo">
+        {{ form.nome.label }}
+        {{ form.nome(placeholder="Digite o nome do produto...")}}
+    </div>
+    <div class="campo">
+        {{ form.tipo.label }}
+        {{ form.tipo }}
+    </div>
+    <div class="campo">
+        {{ form.descricao.label }}
+        {{ form.descricao }}
+    </div>
+    <div class="campo">
+        {{ form.data_aquisicao.label }}
+        {{ form.data_aquisicao }}
+    </div>
+    <div class="campo">
+        {{ form.data_garantia.label }}
+        {{ form.data_garantia }}
+    </div>
+    <div class="campo">
+        {{ form.status.label }}
+        {{ form.status }}
+    </div>
+    <div class="campo">
+        {{ form.proprietario.label }}
+        {{ form.proprietario }}
+    </div>
+    <div class="btn">
+        {{ form.botao_confirmacao }}
+    </div>
+</form>
+
+{% endblock %}

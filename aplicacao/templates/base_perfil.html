@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <a href="/logout">Sair</a>
+    <a href="/ativo">Cadastrar Ativo</a>
+    <a href="/proprietario">Cadastrar proprietario</a>
+    <a href="/feed">Meu Feed</a>
+    <a href="/home">Home</a>
+    
+    <ul>
+        {% for field_errors in form.errors.values() %}
+            {% for error in field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        {% endfor %}
+    </ul>
+
+    {% with mensagens = get_flashed_messages() %}
+    {% if mensagens %}
+
+        {% for msg in mensagens %}
+        <div class="alerta">
+            Alerta! {{ msg }}
+        </div>
+        {% endfor%}
+
+    {% endif %}
+    {% endwith %}
+
+    {% block body %}{% endblock %}
+</body>
+</html>
