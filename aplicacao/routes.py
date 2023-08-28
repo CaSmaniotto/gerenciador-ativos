@@ -97,7 +97,7 @@ def proprietario():
             proprietario = Proprietario(nome=form.nome.data,
                                         cpf=form.cpf.data,
                                         cargo=form.cargo.data,
-                                        departamento=form.departamento.data)
+                                        departamento=form.departamento.data.lower())
             database.session.add(proprietario)
             database.session.commit()
             flash("Proprietário cadastrado!")
@@ -202,13 +202,29 @@ def delete_proprietario():
 @login_required
 def dashboard():
     dados = {}
+    total_ativos = {}
+
     status_choices = FormAtivos().status.choices
     for status_value, _ in status_choices:
         status_count = Ativo.query.filter_by(status=status_value).count()
         dados[status_value] = status_count
         # print(f"Status: {status_value}, Contagem: {status_count}")
     
-    return render_template("dashboard.html", labels=list(dados.keys()), values=list(dados.values()))
+    departamentos = Proprietario.query.with_entities(Proprietario.departamento).distinct().all()
+
+
+
+    for departamento in departamentos:
+        total_ativos_departamento = 0
+        proprietarios_no_departamento = Proprietario.query.filter_by(departamento=departamento[0]).all()
+        # print(proprietarios_no_departamento)
+        for proprietario in proprietarios_no_departamento:
+            total_ativos_departamento += len(proprietario.ativos)
+        total_ativos[departamento[0]] = total_ativos_departamento
+        # print(total_ativos_departamento)
+    
+    return render_template("dashboard.html", labels=list(dados.keys()), values=list(dados.values()), 
+                            ativos_labels=list(total_ativos.keys()), ativos_values=list(total_ativos.values()))
 
 
 @app.route("/logout")

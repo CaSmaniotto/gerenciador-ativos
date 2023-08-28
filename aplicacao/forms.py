@@ -59,3 +59,7 @@ class FormProprietario(FlaskForm):
     cargo = StringField("Cargo", validators=[DataRequired()])
     departamento = StringField("Departamento", validators=[DataRequired()])
     botao_confirmacao = SubmitField("Registrar")
+
+    def validate_departamento(self, departamento):
+        departamento.data = departamento.data.lower()
+        return departamento.data

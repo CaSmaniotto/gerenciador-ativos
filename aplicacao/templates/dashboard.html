@@ -8,15 +8,21 @@ Dashboard
 {% block body %}
 
 
-<div style="position: relative; height:50vh; width:80vw">
-    <canvas id="myChart"></canvas>
+<div style="display: flex;">
+    <div style="position: relative; height:50vh; width:80vw">
+        <canvas id="status"></canvas>
+    </div>
+    
+    <div style="position: relative; height:50vh; width:60vw">
+        <canvas id="ativos"></canvas>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('myChart');
+    const ctx_status = document.getElementById('status');
 
-    new Chart(ctx, {
+    new Chart(ctx_status, {
         type: 'pie',
         data: {
         labels: {{labels|safe}},
@@ -24,9 +30,10 @@ Dashboard
             label: 'Ativos',
             data: {{values}},
             backgroundColor: [
-                'green',
-                'red',
-                'blue'
+                'rgb(21,96,122)',
+                'rgb(206,205,205)',
+                // 'rgb(243,188,0)',
+                'rgb(29,129,162)'
             ]
         }]
         },
@@ -34,11 +41,48 @@ Dashboard
             plugins: {
                 title: {
                     display: true,
-                    text: 'Relação de Ativos'
+                    text: 'Status Ativos'
                 }
             }
         }
+    });
 
+    const ctx_ativos = document.getElementById('ativos');
+
+    new Chart(ctx_ativos, {
+        type: 'bar',
+        data: {
+        labels: {{ativos_labels|safe}},
+        datasets: [{
+            label: 'Ativos',
+            data: {{ativos_values}},
+            backgroundColor: [
+                'rgb(1, 80, 112)',
+                'rgb(0,117,164)',
+                'rgb(0,150,168)',
+                'rgb(0,175,129)',
+                'rgb(126,191,63)',
+                'rgb(243,188,0)'
+            ],
+            borderWidth: 3
+            }],
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Total de Ativos p/ Departamento'
+                }
+            },
+            // indexAxis: 'y',
+            scales: {
+                y: {
+                    ticks: {
+                        stepSize: 1 // Incremento de 1 entre os valores
+                        }
+                    }
+                }
+            }
     });
 </script>
 
