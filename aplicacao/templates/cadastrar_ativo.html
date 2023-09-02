@@ -11,10 +11,11 @@ Cadastrar Ativo
 <ul>
     {% for field_errors in form.errors.values() %}
         {% for error in field_errors %}
-            <li>{{ error }}</li>
+            <li id="error">{{ error }}</li>
         {% endfor %}
     {% endfor %}
 </ul>
+
 
 <form method="POST">
     {{ form.csrf_token }}
@@ -30,7 +31,7 @@ Cadastrar Ativo
     </div>
     <div class="campo">
         {{ form.descricao.label }}
-        {{ form.descricao(placeholder="Descrição...") }}
+        {{ form.descricao(placeholder="Descrição...", rows=4) }}
     </div>
     <div class="campo">
         {{ form.data_aquisicao.label }}

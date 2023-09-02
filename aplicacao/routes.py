@@ -5,7 +5,7 @@ from flask_login import login_required, login_user, logout_user, current_user
 from aplicacao.forms import FormLogin, FormCriarConta, FormAtivos, FormProprietario
 from sqlalchemy import asc
 from sqlalchemy.sql import func
-
+from aplicacao.utils import sendgrid_mail
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -42,6 +42,14 @@ def registrar():
         database.session.add(usuario)
         database.session.commit()
         flash("Usuário registrado com sucesso!")
+
+        titulo = "Conta criada com sucesso!"
+        mensagem = f"""
+        <p>Olá {form.nome.data}, sua conta foi criada com sucesso!<p>
+        <br> Caso não tenha sido você, entre em contato conosco respondendo a este email!
+        """
+        sendgrid_mail(form.email.data, titulo, mensagem)
+
         return redirect('/')
 
     return render_template("registrar.html", form=form)
@@ -161,9 +169,19 @@ def edit_ativo():
 @login_required
 def delete_ativo():
     ativo = Ativo.query.get(session.get('item_id'))
+    print(ativo.nome[:15])
+    mensagem = f"""
+    <p>Ativo deletado com sucesso!<p>
+    <br> Nome: {ativo.nome:.20}<br> Tipo: {ativo.tipo}<br> Descrição: {ativo.descricao:.30}<br>
+    Aquisição: {ativo.data_aquisicao.strftime('%d-%m-%Y')}<br> Garantia: {ativo.data_garantia.strftime('%d-%m-%Y')}<br> 
+    Status: {ativo.status}<br> Proprietário: {ativo.proprietario}
+    """
     database.session.delete(ativo)
     database.session.commit()
     flash("Ativo excluido com sucesso!")
+
+    titulo = "Ativo deletado com sucesso!"
+    sendgrid_mail(current_user.email, titulo, mensagem)
     return redirect(url_for("feed"))
 
 @app.route("/feed/edit_proprietario", methods=["GET", "POST"])
@@ -193,9 +211,19 @@ def edit_proprietario():
 @login_required
 def delete_proprietario():
     proprietario = Proprietario.query.get(session.get('item_id'))
+
+    mensagem = f"""
+    <p>Proprietário deletado com sucesso!<p>
+    <br> Nome: {proprietario.nome}<br> CPF: {proprietario.cpf}<br> Cargo: {proprietario.cargo}<br>
+    Departamento: {proprietario.departamento}<br> Ativos: {proprietario.ativos}
+    """
+
     database.session.delete(proprietario)
     database.session.commit()
     flash("Proprietário excluido com sucesso!")
+
+    titulo = "Proprietário deletado com sucesso!"
+    sendgrid_mail(current_user.email, titulo, mensagem)
     return redirect(url_for("feed"))
 
 @app.route("/dashboard")
@@ -219,7 +247,10 @@ def dashboard():
         proprietarios_no_departamento = Proprietario.query.filter_by(departamento=departamento[0]).all()
         # print(proprietarios_no_departamento)
         for proprietario in proprietarios_no_departamento:
-            total_ativos_departamento += len(proprietario.ativos)
+            # total_ativos_departamento += len(proprietario.ativos)
+            for ativo in proprietario.ativos:
+                if ativo.status == 'Em uso':
+                    total_ativos_departamento += 1
         total_ativos[departamento[0]] = total_ativos_departamento
         # print(total_ativos_departamento)
     

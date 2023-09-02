@@ -9,7 +9,7 @@ Feed
 {% block body %}
     <h2>Proprietários Cadastrados</h2>
     <input type="text" id="propInput" placeholder="Filtrar">
-    <table>
+    <table border="1">
         <thead>
             <tr>
                 <th>nome</th>
@@ -29,8 +29,8 @@ Feed
                 <td>{{proprietario.departamento}}</td>
                 <td>{{proprietario.ativos}}</td>
                 
-                <td><a href="{{ url_for('get_item', item_type='proprietario', action='edit', item_id=proprietario.id) }}">Editar</a></td>
-                <td><a href="{{ url_for('get_item', item_type='proprietario', action='delete', item_id=proprietario.id) }}">Excluir</a></td>
+                <td><a href="{{ url_for('get_item', item_type='proprietario', action='edit', item_id=proprietario.id) }}">Editar</a> |
+                <a href="{{ url_for('get_item', item_type='proprietario', action='delete', item_id=proprietario.id) }}">Excluir</a></td>
             </tr>
         {% endfor %}
         </tbody>
@@ -38,7 +38,7 @@ Feed
 
     <h2>Ativos Cadastrados</h2>
     <input type="text" id="ativoInput" placeholder="Filtrar">
-    <table>
+    <table border="1">
         <thead>
             <tr>
                 <th>nome</th>
@@ -61,15 +61,11 @@ Feed
                 <td>{{ativo.data_garantia.strftime('%d-%m-%Y')}}</td>
                 <td>{{ativo.status}}</td>
                 <td>{{ativo.proprietario}}</td>
-                <td><a href="{{ url_for('get_item', item_type='ativo', action='edit', item_id=ativo.id) }}">Editar</a></td>
-                <td><a href="{{ url_for('get_item', item_type='ativo', action='delete', item_id=ativo.id) }}">Excluir</a></td>
+                <td><a href="{{ url_for('get_item', item_type='ativo', action='edit', item_id=ativo.id) }}">Editar</a> |
+                    <a href="{{ url_for('get_item', item_type='ativo', action='delete', item_id=ativo.id) }}">Excluir</a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
     <p id="contador"></p>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
-
 {% endblock %}

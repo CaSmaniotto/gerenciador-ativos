@@ -4,27 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
 </head>
 <body>
-    <a href="/logout">Sair</a>
-    <a href="/ativo">Cadastrar Ativo</a>
-    <a href="/proprietario">Cadastrar proprietario</a>
-    <a href="/feed">Meu Feed</a>
-    <a href="/home">Home</a>
-    <a href="/dashboard">Dashboard</a>
+    <div class="container">
+        <nav>
+            <a href="/home">Home</a>
+            <a href="/feed">Meu Feed</a>
+            <a href="/ativo">Cadastrar Ativo</a>
+            <a href="/proprietario">Cadastrar proprietario</a>
+            <a href="/dashboard">Dashboard</a>
+            <div class="dropdown">
+                <span>Acessibilidade</span>
+                <div class="dropdown-content">
+                    <button onclick="changeSize()">Tamanho de Fonte</button>
+                    <button id="btnContraste" onclick="toggleDarkMode()">Dark Mode</button>
+                </div>
+            </div>
+            <a href="/logout">Sair</a>
+        </nav>
 
-    {% with mensagens = get_flashed_messages() %}
-    {% if mensagens %}
+        {% with mensagens = get_flashed_messages() %}
+        {% if mensagens %}
 
-        {% for msg in mensagens %}
-        <div class="alerta">
-            Alerta! {{ msg }}
-        </div>
-        {% endfor%}
+            {% for msg in mensagens %}
+            <div id="alerta">
+                Alerta! {{ msg }}
+            </div>
+            {% endfor%}
 
-    {% endif %}
-    {% endwith %}
+        {% endif %}
+        {% endwith %}
 
-    {% block body %}{% endblock %}
+        {% block body %}{% endblock %}
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>

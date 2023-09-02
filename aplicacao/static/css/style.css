@@ -1,0 +1,225 @@
+/* cores invertidas 
+
+#f1f1f1 -> #0e0e0e
+#f0f6ff -> #0f0900
+#ffffff -> #000000
+#454546 -> #babab9
+#4c54ad -> #b3ab52
+*/
+
+* {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f0f6ff;
+}
+
+div.container {
+    padding: 0px 0px 30px 0px;
+}
+
+textarea {
+    resize: none;
+}
+
+form {
+    color: #454546;
+    display: grid;
+    gap: 15px;
+    background-color: #fff;
+    width: 40vw;
+    max-width: 750px;
+    margin: 30px auto auto auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+form div.campo, div.bool {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+form div.campo label, div.bool label, div.remember label {
+    font-size: 14px;
+}
+
+form div.campo input, div.bool input, textarea, select {
+    border-radius: 5px;
+    border: 1px solid rgb(200, 193, 207);
+    padding: 8px 10px;
+}
+
+div.remember  {
+    display: flex;
+    gap: 10px;
+}
+
+form div.btn input {
+    width: 100%;
+    text-align: center;
+    background-color: rgb(95,104,211);
+    color: #fff;
+    border: 1px solid rgb(86, 95, 194);
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form div.btn input:hover {
+    background-color: #4c54ad;
+    transition: .5s;
+}
+
+form div.btn a {
+    font-size: 14px;
+}
+
+form div.btn a:active {
+    color: none;
+}
+
+.changeFont {
+    font-size: 1.08em;
+}
+
+table td, th {
+    overflow-x: auto;
+    max-height: calc(100vh - 17px);
+}
+
+table {
+    width: 100vw;
+    text-align: center;
+    margin: 10px 0;
+}
+
+table a {
+    color: rgb(107, 56, 131);
+    text-decoration: none;
+}
+
+#ativoInput, #propInput {
+    margin: 10px;
+    padding: 6px 10px;
+}
+
+nav {
+    justify-content: center;
+    display: flex;
+    gap: 20px;
+    background-color: #fff;
+    width: 100vw;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+nav a {
+    color: #454546;
+    text-decoration: none;
+    text-align: center;
+}
+
+nav a:hover {
+    transition: .5s;
+    color: #4c54ad;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown span {
+    color: #454546;
+}
+
+.dropdown:hover span {
+    transition: .5s;
+    color: #4c54ad !important;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content button {
+    color: rgb(69, 69, 70);
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    border: none;
+    background-color: #f9f9f9;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-content button:hover {
+    background-color: #f1f1f1
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+#alerta, #error {
+    background-color: blue;
+    position: absolute;
+    color: #fff;
+    transition: .5s;
+}
+
+.dark {
+    background-color: black;
+}
+
+.dark form, .dark nav {
+    background-color: rgb(33,33,33);
+}
+
+.dark nav a, .dark nav span {
+    color: #fff;
+}
+
+.dark nav a:hover {
+    color: #603496;    
+}
+
+.dark .dropdown:hover span {
+    color: #603496 !important;  
+}
+
+.dark label, .dark h3, .dark h2 {
+    color: #fff;
+}
+
+.dark input#botao_confirmacao {
+    background-color: #53238d;
+    border: 1px solid #321457 !important;
+}
+
+.dark input#botao_confirmacao:hover {
+    transition: .5s;
+    background-color: #603496;
+}
+
+.dark input, .dark textarea, .dark select {
+    border: 1px solid black !important;
+    color: #fff !important;
+    background-color: rgb(47,47,47);
+}
+
+.dark table {
+    color: #fff;
+    background-color: rgb(33,33,33);
+}
