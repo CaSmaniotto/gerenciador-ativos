@@ -183,6 +183,10 @@ nav a:hover {
     background-color: black;
 }
 
+.dark form a {
+    color: red;
+}
+
 .dark form, .dark nav {
     background-color: rgb(33,33,33);
 }
@@ -197,6 +201,10 @@ nav a:hover {
 
 .dark .dropdown:hover span {
     color: #603496 !important;  
+}
+
+.dark .dropdown:hover a {
+    color: rgb(69, 69, 70);
 }
 
 .dark label, .dark h3, .dark h2 {

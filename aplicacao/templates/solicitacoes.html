@@ -1,0 +1,44 @@
+{% extends 'base_perfil.html' %}
+
+{% block title %}
+
+Solicitações
+
+{% endblock %}
+
+{% block body %}
+
+<h2>Solicitações Geradas</h2>
+<input type="text" id="input" placeholder="Filtrar">
+<table border="1">
+    <thead>
+        <tr>
+            <th>cpf_solicitante</th>
+            <th>nome_solicitante</th>
+            <th>email_solicitante</th>
+            <th>proprietario</th>
+            <th>ativo</th>
+            <th>quantidade</th>
+            <th>descricao</th>
+            <th>status</th>
+            <th>Opções</th>
+        </tr>
+    </thead>
+    <tbody id="table">
+        {% for solicitacao in solicitacoes %}
+        <tr>    
+            <td>{{solicitacao.usuario.cpf}}</td>
+            <td>{{solicitacao.usuario.nome}}</td>
+            <td>{{solicitacao.usuario.email}}</td>
+            <td>{{solicitacao.ativo.nome}}</td>
+            <td>{{solicitacao.quantidade}}</td>
+            <td>{{solicitacao.descricao}}</td>
+            <td>{{solicitacao.data.strftime('%d-%m-%Y')}}</td>
+            <td>{{solicitacao.status}}</td>
+            <td><a href="{{ url_for('get_item', item_type='solicitacao', action='finish', item_id=solicitacao.id) }}">Finalizar</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

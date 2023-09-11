@@ -3,12 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_admin import Admin
-from datetime import timedelta
+# from datetime import timedelta
 from sendgrid import SendGridAPIClient
 
 # api key sendgrid
 # sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-sg = SendGridAPIClient("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")
+sg = SendGridAPIClient("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")
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///almoxarifado.db"
@@ -17,10 +17,10 @@ app.config["SECRET_KEY"] = "a3190c71717b80582c2b580d8bc02528"
 database = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-# login_manager.login_view = "index"
+login_manager.login_view = "index"
 login_manager.session_protected = None
 login_manager.login_message = "Por favor faça login para acessar essa página!"
-# admin = Admin(app, name='Painel de Controle', template_mode='bootstrap3')
+admin = Admin(app, name='Painel de Controle', template_mode='bootstrap4')
 
 login_manager.login_view = 'index'
 login_manager.refresh_view = 'index'

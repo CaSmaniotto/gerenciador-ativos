@@ -9,11 +9,41 @@
 <body>
     <div class="container">
         <nav>
+            {% if current_user.permissao < 2 %}
+
+            <a href="/home">Criar Solicitação</a>
+            <a href="/feed">Minhas Solicitações</a>
+
+            {% else %}
+            
             <a href="/home">Home</a>
-            <a href="/feed">Meu Feed</a>
-            <a href="/ativo">Cadastrar Ativo</a>
-            <a href="/proprietario">Cadastrar proprietario</a>
+            <div class="dropdown">
+                <span>Registros</span>
+                <div class="dropdown-content">
+                    <a href="/feed"><button>Minhas Solicitações</button></a>
+                    <a href="/solicitacoes"><button>Todas Solicitações</button></a>
+                    <a href="/transacoes"><button>Todas Transações</button></a>
+                    <a href="/proprietarios"><button>Lista Proprietários</button></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>Estoque</span>
+                <div class="dropdown-content">
+                    <a href="/estoque"><button>Visualizar Estoque</button></a>
+                    <a href="/adicionar_estoque"><button>Gerar Transação</button></a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <span>Cadastrar</span>
+                <div class="dropdown-content">
+                    <a href="/ativo"><button>Novo Ativo</button></a>
+                    <a href="/proprietario"><button>Novo Proprietario</button></a>
+                </div>
+            </div>
             <a href="/dashboard">Dashboard</a>
+
+            {% endif %}
+
             <div class="dropdown">
                 <span>Acessibilidade</span>
                 <div class="dropdown-content">

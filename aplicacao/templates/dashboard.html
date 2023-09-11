@@ -14,7 +14,15 @@ Dashboard
     </div>
     
     <div style="position: relative; height:50vh; width:60vw">
+        <canvas id="total"></canvas>
+    </div>
+
+    <div style="position: relative; height:50vh; width:60vw">
         <canvas id="ativos"></canvas>
+    </div>
+
+    <div style="position: relative; height:50vh; width:60vw">
+        <canvas id="solicitacoes"></canvas>
     </div>
 </div>
 
@@ -27,7 +35,7 @@ Dashboard
         data: {
         labels: {{labels|safe}},
         datasets: [{
-            label: 'Ativos',
+            label: 'Quantidade em estoque',
             data: {{values}},
             backgroundColor: [
                 'rgb(21,96,122)',
@@ -41,21 +49,21 @@ Dashboard
             plugins: {
                 title: {
                     display: true,
-                    text: 'Status Ativos'
+                    text: 'Ativos em estoque p/ Categoria'
                 }
             }
         }
     });
 
-    const ctx_ativos = document.getElementById('ativos');
+    const ctx_total = document.getElementById('total');
 
-    new Chart(ctx_ativos, {
+    new Chart(ctx_total, {
         type: 'bar',
         data: {
-        labels: {{ativos_labels|safe}},
+        labels: {{total_labels|safe}},
         datasets: [{
-            label: 'Ativos',
-            data: {{ativos_values}},
+            label: 'Total p/ Departamento',
+            data: {{total_values}},
             backgroundColor: [
                 'rgb(1, 80, 112)',
                 'rgb(0,117,164)',
@@ -71,7 +79,7 @@ Dashboard
             plugins: {
                 title: {
                     display: true,
-                    text: 'Total de Ativos em Uso p/ Departamento'
+                    text: 'Total de Ativos p/ Departamento (Apenas Saídas)'
                 }
             },
             // indexAxis: 'y',
@@ -84,6 +92,69 @@ Dashboard
                 }
             }
     });
+
+    const ctx_ativos = document.getElementById('ativos');
+
+    new Chart(ctx_ativos, {
+        type: 'bar',
+        data: {
+        labels: {{estoque_labels|safe}},
+        datasets: [{
+            backgroundColor: ['rgb(30,66,122)'],
+            label: 'Total',
+            data: {{estoque_values}},
+            borderWidth: 3
+            }],
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Total de Ativos no Estoque'
+                }
+            },
+            // indexAxis: 'y',
+            scales: {
+                y: {
+                    ticks: {
+                        stepSize: 1 // Incremento de 1 entre os valores
+                        }
+                    }
+                }
+            }
+    });
+
+    const ctx_solicitacoes = document.getElementById('solicitacoes');
+
+    new Chart(ctx_solicitacoes, {
+        type: 'bar',
+        data: {
+        labels: {{solicitacoes_labels|safe}},
+        datasets: [{
+            backgroundColor: ['rgb(30,66,122)'],
+            label: 'Total',
+            data: {{solicitacoes_values}},
+            borderWidth: 3
+            }],
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Solicitações p/ Status'
+                }
+            },
+            // indexAxis: 'y',
+            scales: {
+                y: {
+                    ticks: {
+                        stepSize: 1 // Incremento de 1 entre os valores
+                        }
+                    }
+                }
+            }
+    });
+
 </script>
 
 {% endblock %}

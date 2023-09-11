@@ -7,62 +7,29 @@ Feed
 {% endblock %}
 
 {% block body %}
-    <h2>Proprietários Cadastrados</h2>
-    <input type="text" id="propInput" placeholder="Filtrar">
-    <table border="1">
-        <thead>
-            <tr>
-                <th>nome</th>
-                <th>cpf</th>
-                <th>cargo</th>
-                <th>departamento</th>
-                <th>ativos</th>
-                <th>Opções</th>
-            </tr>
-        </thead>
-        <tbody id="propTable">
-            {% for proprietario in proprietarios %}
-            <tr>
-                <td>{{proprietario.nome}}</td>
-                <td>{{proprietario.cpf}}</td>
-                <td>{{proprietario.cargo}}</td>
-                <td>{{proprietario.departamento}}</td>
-                <td>{{proprietario.ativos}}</td>
-                
-                <td><a href="{{ url_for('get_item', item_type='proprietario', action='edit', item_id=proprietario.id) }}">Editar</a> |
-                <a href="{{ url_for('get_item', item_type='proprietario', action='delete', item_id=proprietario.id) }}">Excluir</a></td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
 
-    <h2>Ativos Cadastrados</h2>
-    <input type="text" id="ativoInput" placeholder="Filtrar">
+    <h2>Minhas Solicitações</h2>
+    <input type="text" id="input" placeholder="Filtrar">
     <table border="1">
         <thead>
             <tr>
-                <th>nome</th>
-                <th>tipo</th>
+                <th>solicitante</th>
                 <th>descricao</th>
-                <th>data_aquisicao</th>
-                <th>data_garantia</th>
+                <th>data</th>
+                <th>ativo</th>
+                <th>quantidade</th>
                 <th>status</th>
-                <th>proprietario</th>
-                <th>Opções</th>
             </tr>
         </thead>
-        <tbody id="ativoTable">
-            {% for ativo in ativos %}
+        <tbody id="table">
+            {% for solicitacao in solicitacoes %}
             <tr>
-                <td>{{ativo.nome}}</td>
-                <td>{{ativo.tipo}}</td>
-                <td>{{ativo.descricao}}</td>
-                <td>{{ativo.data_aquisicao.strftime('%d-%m-%Y')}}</td>
-                <td>{{ativo.data_garantia.strftime('%d-%m-%Y')}}</td>
-                <td>{{ativo.status}}</td>
-                <td>{{ativo.proprietario}}</td>
-                <td><a href="{{ url_for('get_item', item_type='ativo', action='edit', item_id=ativo.id) }}">Editar</a> |
-                    <a href="{{ url_for('get_item', item_type='ativo', action='delete', item_id=ativo.id) }}">Excluir</a></td>
+                <td>{{solicitacao.usuario.nome}}</td>
+                <td>{{solicitacao.descricao}}</td>
+                <td>{{solicitacao.data.strftime('%d-%m-%Y')}}</td>
+                <td>{{solicitacao.ativo.nome}}</td>
+                <td>{{solicitacao.quantidade}}</td>
+                <td>{{solicitacao.status}}</td>
             </tr>
             {% endfor %}
         </tbody>

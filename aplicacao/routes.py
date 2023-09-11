@@ -1,11 +1,16 @@
-from flask import render_template, url_for, redirect, flash, session, request
+from flask import render_template, url_for, redirect, flash, session, abort
 from aplicacao import app, database, bcrypt
-from aplicacao.models import Usuario, Ativo, Proprietario
+from aplicacao.models import Usuario, Ativo, Proprietario, TransacaoEstoque, Solicitacao
 from flask_login import login_required, login_user, logout_user, current_user
-from aplicacao.forms import FormLogin, FormCriarConta, FormAtivos, FormProprietario
+from aplicacao.forms import FormLogin, FormCriarConta, FormAtivos, FormProprietario, FormTransacaoEstoque, FormSolicitacao
 from sqlalchemy import asc
 from sqlalchemy.sql import func
 from aplicacao.utils import sendgrid_mail
+from collections import defaultdict
+
+@app.errorhandler(403)
+def access_denied(e):
+    return redirect(url_for('home'))
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -54,18 +59,37 @@ def registrar():
 
     return render_template("registrar.html", form=form)
 
-@app.route("/home")
+@app.route("/home", methods=['GET', 'POST'])
 @login_required
 def home():
-    return render_template("home.html")
+
+    form = FormSolicitacao()
+
+    ativos = Ativo.query.all()
+    form.ativo.choices = [(int(atv.id), atv.nome) for atv in ativos]
+
+    if form.validate_on_submit():
+        solicitacao = Solicitacao(descricao=form.descricao.data,
+                                    id_usuario=current_user.id,
+                                    id_ativo=form.ativo.data,
+                                    quantidade=form.quantidade.data,
+                                    status='Aguardando')
+
+        database.session.add(solicitacao)
+        database.session.commit()
+        return redirect(url_for("feed"))
+
+    return render_template("home.html", form=form)
 
 @app.route("/ativo", methods=["GET", "POST"])
 @login_required
 def ativo():
+    if current_user.permissao < 2:
+        return abort(403)
     form = FormAtivos()
 
-    proprietarios = Proprietario.query.all()
-    form.proprietario.choices = [(int(prop.id), prop.nome) for prop in proprietarios]
+    # proprietarios = Proprietario.query.all()
+    # form.proprietario.choices = [(int(prop.id), prop.nome) for prop in proprietarios]
 
     if form.validate_on_submit():
         ativo = Ativo.query.filter_by(nome=form.nome.data).first()
@@ -82,18 +106,20 @@ def ativo():
                         descricao=form.descricao.data,
                         data_aquisicao=form.data_aquisicao.data,
                         data_garantia=form.data_garantia.data,
-                        status=form.status.data,
-                        id_proprietario=form.proprietario.data)
+                        quantidade_estoque=form.quantidade_estoque.data)
+                        # id_proprietario=form.proprietario.data
             database.session.add(ativo)
             database.session.commit()
             flash("ativo criado com sucesso!")
-            return redirect('/feed')
+            return redirect('/estoque')
 
     return render_template("cadastrar_ativo.html", form=form)
 
 @app.route("/proprietario", methods=["GET", "POST"])
 @login_required
 def proprietario():
+    if current_user.permissao < 2:
+        return abort(403)
     form = FormProprietario()
 
     if form.validate_on_submit():
@@ -109,19 +135,30 @@ def proprietario():
             database.session.add(proprietario)
             database.session.commit()
             flash("Proprietário cadastrado!")
-            return redirect('/feed')
+            return redirect('/proprietarios')
     return render_template("cadastrar_proprietario.html", form=form)
 
 @app.route("/feed")
 @login_required
 def feed():
+    solicitacoes = Solicitacao.query.filter_by(id_usuario=current_user.id).order_by(Solicitacao.data.desc()).all()
+    return render_template("feed.html", solicitacoes=solicitacoes)
+
+@app.route("/proprietarios")
+@login_required
+def proprietarios():
+    if current_user.permissao < 2:
+        return abort(403)
+    
     proprietarios = Proprietario.query.all()
-    ativos = Ativo.query.all()
-    return render_template("feed.html", ativos=ativos, proprietarios=proprietarios)
+    return render_template("proprietarios.html", proprietarios=proprietarios)
 
 @app.route("/get_item/<string:item_type>/<string:action>/<int:item_id>")
 @login_required
 def get_item(item_type, action, item_id):
+    if current_user.permissao < 2:
+        return abort(403)
+    
     session['item_id'] = item_id
     
     if item_type == 'ativo':
@@ -134,47 +171,52 @@ def get_item(item_type, action, item_id):
             return redirect(url_for("edit_proprietario"))
         elif action == 'delete':
             return redirect(url_for("delete_proprietario"))
+    elif item_type == 'solicitacao':
+        if action == 'finish':
+            solicitacao = Solicitacao.query.filter_by(id=item_id).first()
+            solicitacao.status = 'Finalizado'
+            database.session.commit()
+            return redirect(url_for("solicitacoes"))
     else:
-        return redirect("feed")
+        return redirect("estoque")
 
-@app.route("/feed/edit_ativo", methods=["GET", "POST"])
+@app.route("/estoque/edit_ativo", methods=["GET", "POST"])
 @login_required
 def edit_ativo():
+    if current_user.permissao < 2:
+        return abort(403)
+    
     ativo_id = session.get('item_id')
     ativo = Ativo.query.get(int(ativo_id))
 
     form_edit = FormAtivos(obj=ativo)
 
     # Definindo os campos do form
-    form_edit.proprietario.choices = [(prop.id, prop.nome) for prop in Proprietario.query.all()]
+    # form_edit.proprietario.choices = [(prop.id, prop.nome) for prop in Proprietario.query.all()]
 
     if form_edit.validate_on_submit():
-        # form_edit.populate_obj(ativo)
-        ativo.nome = form_edit.nome.data
-        ativo.tipo =form_edit.tipo.data
-        ativo.descricao = form_edit.descricao.data
-        ativo.data_aquisicao = form_edit.data_aquisicao.data
-        ativo.data_garantia = form_edit.data_garantia.data
-        ativo.status = form_edit.status.data
-        ativo.id_proprietario = form_edit.proprietario.data
+        form_edit.populate_obj(ativo)
 
         database.session.commit()
         flash("Editado com sucesso!")
-        return redirect('/feed')
-    elif request.method == 'GET':
-        form_edit.proprietario.data = str(ativo.proprietario.id)
-        return render_template("edit_ativo.html", form=form_edit) 
+        return redirect('/estoque')
+    # elif request.method == 'GET':
+    #     form_edit.proprietario.data = str(ativo.proprietario.id)
+        # return render_template("edit_ativo.html", form=form_edit) 
+    return render_template("edit_ativo.html", form=form_edit) 
 
 @app.route("/delete_ativo")
 @login_required
 def delete_ativo():
+    if current_user.permissao < 2:
+        return abort(403)
+    
     ativo = Ativo.query.get(session.get('item_id'))
-    print(ativo.nome[:15])
+    # print(ativo.nome[:15])
     mensagem = f"""
     <p>Ativo deletado com sucesso!<p>
     <br> Nome: {ativo.nome:.20}<br> Tipo: {ativo.tipo}<br> Descrição: {ativo.descricao:.30}<br>
-    Aquisição: {ativo.data_aquisicao.strftime('%d-%m-%Y')}<br> Garantia: {ativo.data_garantia.strftime('%d-%m-%Y')}<br> 
-    Status: {ativo.status}<br> Proprietário: {ativo.proprietario}
+    Aquisição: {ativo.data_aquisicao.strftime('%d-%m-%Y')}<br> Garantia: {ativo.data_garantia.strftime('%d-%m-%Y')}
     """
     database.session.delete(ativo)
     database.session.commit()
@@ -184,9 +226,12 @@ def delete_ativo():
     sendgrid_mail(current_user.email, titulo, mensagem)
     return redirect(url_for("feed"))
 
-@app.route("/feed/edit_proprietario", methods=["GET", "POST"])
+@app.route("/proprietarios/edit_proprietario", methods=["GET", "POST"])
 @login_required
 def edit_proprietario():
+    if current_user.permissao < 2:
+        return abort(403)
+    
     proprietario_id = session.get('item_id')
     proprietario = Proprietario.query.get(int(proprietario_id))
 
@@ -201,7 +246,7 @@ def edit_proprietario():
 
             database.session.commit()
             flash("Editado com sucesso!")
-            return redirect('/feed')
+            return redirect('/proprietarios')
         else:
             flash("CPF já utilizado!")
 
@@ -210,12 +255,15 @@ def edit_proprietario():
 @app.route("/delete_proprietario")
 @login_required
 def delete_proprietario():
+    if current_user.permissao < 2:
+        return abort(403)
+    
     proprietario = Proprietario.query.get(session.get('item_id'))
 
     mensagem = f"""
     <p>Proprietário deletado com sucesso!<p>
     <br> Nome: {proprietario.nome}<br> CPF: {proprietario.cpf}<br> Cargo: {proprietario.cargo}<br>
-    Departamento: {proprietario.departamento}<br> Ativos: {proprietario.ativos}
+    Departamento: {proprietario.departamento}
     """
 
     database.session.delete(proprietario)
@@ -229,34 +277,107 @@ def delete_proprietario():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    dados = {}
-    total_ativos = {}
-
-    status_choices = FormAtivos().status.choices
-    for status_value, _ in status_choices:
-        status_count = Ativo.query.filter_by(status=status_value).count()
-        dados[status_value] = status_count
-        # print(f"Status: {status_value}, Contagem: {status_count}")
+    if current_user.permissao < 2:
+        return abort(403)
     
-    departamentos = Proprietario.query.with_entities(Proprietario.departamento).distinct().all()
-
-
-
-    for departamento in departamentos:
-        total_ativos_departamento = 0
-        proprietarios_no_departamento = Proprietario.query.filter_by(departamento=departamento[0]).all()
-        # print(proprietarios_no_departamento)
-        for proprietario in proprietarios_no_departamento:
-            # total_ativos_departamento += len(proprietario.ativos)
-            for ativo in proprietario.ativos:
-                if ativo.status == 'Em uso':
-                    total_ativos_departamento += 1
-        total_ativos[departamento[0]] = total_ativos_departamento
-        # print(total_ativos_departamento)
+    proprietarios = Proprietario.query.all()
     
-    return render_template("dashboard.html", labels=list(dados.keys()), values=list(dados.values()), 
-                            ativos_labels=list(total_ativos.keys()), ativos_values=list(total_ativos.values()))
+    # Total de ativos por categoria
+    ativos = {}
 
+    ativos = database.session.query(Ativo.tipo, database.func.sum(Ativo.quantidade_estoque)).group_by(Ativo.tipo).all()
+    tipos_ativos = [ativo[0] for ativo in ativos]
+    quantidades_ativos = [ativo[1] for ativo in ativos]
+
+    # Total de ativos por departamento (total de saídas por departamento)
+    total_ativos_departamento = defaultdict(int)
+
+    for proprietario in proprietarios:
+        for transacao in proprietario.transacoes:
+            if transacao.tipo == 'Saída':
+                total_ativos_departamento[proprietario.departamento] += int(transacao.quantidade)
+
+    # Quantidade de ativos
+    estoque = {}
+    ativos = Ativo.query.all()
+    for ativo in ativos:
+        estoque[ativo.nome] = ativo.quantidade_estoque
+
+    # Quantidade de solicitações abertas
+    total_solicitacoes = defaultdict(int)
+    solicitacoes = Solicitacao.query.all()
+
+    for solicitacao in solicitacoes:
+        total_solicitacoes[solicitacao.status] += 1
+    
+    return render_template("dashboard.html", labels=list(tipos_ativos), values=list(quantidades_ativos), 
+                            total_labels=list(total_ativos_departamento.keys()), total_values=list(total_ativos_departamento.values()),
+                            estoque_labels=list(estoque.keys()), estoque_values=list(estoque.values()),
+                            solicitacoes_labels=list(total_solicitacoes.keys()), solicitacoes_values=list(total_solicitacoes.values()))
+
+@app.route("/adicionar_estoque", methods=['GET', 'POST'])
+@login_required
+def adicionar_estoque():
+    if current_user.permissao < 2:
+        return abort(403)
+    
+    form = FormTransacaoEstoque()
+
+    proprietarios = Proprietario.query.all()
+    # form.proprietario.choices = [('Estoque (Apenas Entradas)', 'Estoque (Apenas Entradas)')]
+    # isso iria dar erro na hora de listar
+    form.proprietario.choices = [(int(prop.id), prop.nome) for prop in proprietarios]
+
+    ativos = Ativo.query.all()
+    form.ativo.choices = [(int(atv.id), atv.nome) for atv in ativos]
+
+    if form.validate_on_submit():
+        ativo = Ativo.query.filter_by(id=form.ativo.data).first()
+        
+        transacao = TransacaoEstoque(tipo=form.tipo.data,
+                                        descricao=form.descricao.data,
+                                        quantidade=form.quantidade.data,
+                                        id_ativo=form.ativo.data,
+                                        id_proprietario=form.proprietario.data)
+
+        if form.tipo.data == 'Entrada':
+            ativo.quantidade_estoque += int(form.quantidade.data)
+            
+        elif form.tipo.data == 'Saída':
+            ativo.quantidade_estoque -= int(form.quantidade.data)
+        
+        database.session.add(transacao)
+        database.session.commit()
+        return redirect(url_for('transacoes'))
+
+    return render_template("adicionar_estoque.html", form=form)
+
+@app.route("/estoque")
+@login_required
+def estoque():
+    if current_user.permissao < 2:
+        return abort(403)
+    
+    ativos = Ativo.query.all()
+    return render_template("estoque.html", ativos=ativos)
+
+@app.route("/solicitacoes")
+@login_required
+def solicitacoes():
+    if current_user.permissao < 2:
+        return abort(403)
+    
+    solicitacoes = Solicitacao.query.order_by(Solicitacao.data.desc()).all()
+    return render_template("solicitacoes.html", solicitacoes=solicitacoes)
+
+@app.route("/transacoes")
+@login_required
+def transacoes():
+    if current_user.permissao < 2:
+        return abort(403)
+    
+    transacoes = TransacaoEstoque.query.order_by(TransacaoEstoque.data.desc()).all()
+    return render_template("transacoes.html", transacoes=transacoes)
 
 @app.route("/logout")
 @login_required

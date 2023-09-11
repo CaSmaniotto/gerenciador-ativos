@@ -42,12 +42,8 @@ Cadastrar Ativo
         {{ form.data_garantia }}
     </div>
     <div class="campo">
-        {{ form.status.label }}
-        {{ form.status }}
-    </div>
-    <div class="campo">
-        {{ form.proprietario.label }}
-        {{ form.proprietario }}
+        {{ form.quantidade_estoque.label }}
+        {{ form.quantidade_estoque(placeholder="Quantidade...") }}
     </div>
     <div class="btn">
         {{ form.botao_confirmacao }}
