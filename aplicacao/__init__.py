@@ -8,11 +8,7 @@ from sendgrid import SendGridAPIClient
 
 # api key sendgrid
 # sg = SendGridAPIClient(os.environ.get('SENDGRID_API_KEY'))
-<<<<<<< HEAD
-sg = SendGridAPIClient("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")
-=======
 sg = SendGridAPIClient("YOUR_API_KEY")
->>>>>>> 3ebcf89f70909a38e15b55864c660a72c5eb43fb
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///almoxarifado.db"
