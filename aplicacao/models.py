@@ -1,4 +1,4 @@
-from aplicacao import database, login_manager, admin, database
+from aplicacao import database, login_manager, database, admin #manager
 from flask_login import UserMixin, current_user
 from datetime import datetime
 from flask_admin.contrib.sqla import ModelView
@@ -83,6 +83,13 @@ class ControlUsuario(ModelView):
     def not_auth(self):
         return "acess denied!"
 
+    form_choices = {
+        'permissao': [ (0,0), 
+                    (1,1)]
+    }
+    column_list = ['nome', 'cpf', 'email', 'solicitacoes']
+    column_filters = ['cpf', 'email', 'solicitacoes']
+    form_excluded_columns = ['solicitacoes', 'senha']
     create_modal = True
     edit_modal = True
     can_view_details = True
@@ -99,6 +106,9 @@ class ControlProprietario(ModelView):
     def not_auth(self):
         return "acess denied!"
     
+    column_list = ['nome', 'cpf', 'cargo', 'departamento', 'transacoes']
+    column_filters = ['cpf', 'cargo', 'departamento', 'transacoes']
+    form_excluded_columns = ['transacoes']
     create_modal = True
     edit_modal = True
     can_view_details = True
@@ -115,6 +125,14 @@ class ControlAtivo(ModelView):
     def not_auth(self):
         return "acess denied"
 
+    form_choices = {
+        'tipo': [ ('Software','Software'), 
+                    ('Hardware','Hardware'),
+                    ('Licença','Licença')]
+    }
+    form_excluded_columns = ['transacoes', 'solicitacoes']
+    column_list = ['nome', 'tipo', 'descricao', 'data_aquisicao', 'data_garantia', 'quantidade_estoque', 'solicitacoes']
+    column_filters = ['data_aquisicao', 'tipo', 'nome', 'quantidade_estoque']
     create_modal = True
     edit_modal = True
     can_view_details = True
@@ -131,6 +149,12 @@ class ControlSolicitacao(ModelView):
     def not_auth(self):
         return "acess denied"
 
+
+    form_choices = {
+        'status': [ ('Aguardando','Aguardando'), 
+                    ('Finalizado','Finalizado')]
+    }
+    column_filters = ['data', 'usuario', 'status', 'ativo', 'quantidade']
     create_modal = True
     edit_modal = True
     can_view_details = True
@@ -147,6 +171,11 @@ class ControlTransacaoEstoque(ModelView):
     def not_auth(self):
         return "acess denied"
 
+    form_choices = {
+        'tipo': [ ('Entrada','Entrada'), 
+                    ('Saída','Saída')]
+    }
+    column_filters = ['tipo', 'data', 'proprietario', 'ativo']
     create_modal = True
     edit_modal = True
     can_view_details = True
@@ -160,3 +189,6 @@ admin.add_view(ControlSolicitacao(Solicitacao, database.session, name='Solicitac
 admin.add_view(ControlTransacaoEstoque(TransacaoEstoque, database.session, name='TransacoesEstoque'))
 admin.add_link(MenuLink(name='Voltar', url='/feed'))
 admin.add_link(MenuLink(name='Sair', url='/logout'))
+
+# manager.add_link(MenuLink(name='Voltar', url='/feed'))
+# manager.add_link(MenuLink(name='Sair', url='/logout'))

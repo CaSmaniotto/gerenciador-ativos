@@ -53,7 +53,8 @@ def registrar():
         <p>Olá {form.nome.data}, sua conta foi criada com sucesso!<p>
         <br> Caso não tenha sido você, entre em contato conosco respondendo a este email!
         """
-        sendgrid_mail(form.email.data, titulo, mensagem)
+        copia = 'hopidi1857@recutv.com' # suposto email do departamento de ti
+        sendgrid_mail(form.email.data, titulo, mensagem, copia)
 
         return redirect('/')
 
@@ -77,6 +78,18 @@ def home():
 
         database.session.add(solicitacao)
         database.session.commit()
+
+        titulo = "Solicitação Gerada!"
+        mensagem = f"""
+        <p>Olá {current_user.nome}!</p>
+        <p>Solicitação gerada com sucesso</p>
+        <p>Número: {solicitacao.id}</p>
+        <p>Solicitante: {current_user.nome}</p>
+        <p>Status: {solicitacao.status}</p>
+        """
+        copia = 'hopidi1857@recutv.com' # suposto email do departamento de ti
+        sendgrid_mail(current_user.email, titulo, mensagem, copia)
+
         return redirect(url_for("feed"))
 
     return render_template("home.html", form=form)
@@ -107,7 +120,6 @@ def ativo():
                         data_aquisicao=form.data_aquisicao.data,
                         data_garantia=form.data_garantia.data,
                         quantidade_estoque=form.quantidade_estoque.data)
-                        # id_proprietario=form.proprietario.data
             database.session.add(ativo)
             database.session.commit()
             flash("ativo criado com sucesso!")
@@ -174,8 +186,22 @@ def get_item(item_type, action, item_id):
     elif item_type == 'solicitacao':
         if action == 'finish':
             solicitacao = Solicitacao.query.filter_by(id=item_id).first()
+            if solicitacao.status == 'Finalizado':
+                return redirect(url_for("solicitacoes"))
+            
             solicitacao.status = 'Finalizado'
             database.session.commit()
+
+            titulo = 'Solicitação Finalizada'
+            mensagem = f"""
+            <p>Solicitante: {solicitacao.usuario.nome}</p>
+            <p>Número: {solicitacao.id}</p>
+            <p>Status: {solicitacao.status}</p>
+            """
+            print(solicitacao.usuario.nome)
+            copia = 'hopidi1857@recutv.com' # suposto email do departamento de ti
+            sendgrid_mail(solicitacao.usuario.email, titulo, mensagem, copia)
+
             return redirect(url_for("solicitacoes"))
     else:
         return redirect("estoque")
@@ -212,18 +238,11 @@ def delete_ativo():
         return abort(403)
     
     ativo = Ativo.query.get(session.get('item_id'))
-    # print(ativo.nome[:15])
-    mensagem = f"""
-    <p>Ativo deletado com sucesso!<p>
-    <br> Nome: {ativo.nome:.20}<br> Tipo: {ativo.tipo}<br> Descrição: {ativo.descricao:.30}<br>
-    Aquisição: {ativo.data_aquisicao.strftime('%d-%m-%Y')}<br> Garantia: {ativo.data_garantia.strftime('%d-%m-%Y')}
-    """
+    
     database.session.delete(ativo)
     database.session.commit()
     flash("Ativo excluido com sucesso!")
 
-    titulo = "Ativo deletado com sucesso!"
-    sendgrid_mail(current_user.email, titulo, mensagem)
     return redirect(url_for("feed"))
 
 @app.route("/proprietarios/edit_proprietario", methods=["GET", "POST"])
@@ -260,18 +279,10 @@ def delete_proprietario():
     
     proprietario = Proprietario.query.get(session.get('item_id'))
 
-    mensagem = f"""
-    <p>Proprietário deletado com sucesso!<p>
-    <br> Nome: {proprietario.nome}<br> CPF: {proprietario.cpf}<br> Cargo: {proprietario.cargo}<br>
-    Departamento: {proprietario.departamento}
-    """
-
     database.session.delete(proprietario)
     database.session.commit()
     flash("Proprietário excluido com sucesso!")
 
-    titulo = "Proprietário deletado com sucesso!"
-    sendgrid_mail(current_user.email, titulo, mensagem)
     return redirect(url_for("feed"))
 
 @app.route("/dashboard")

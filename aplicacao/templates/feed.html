@@ -10,9 +10,10 @@ Feed
 
     <h2>Minhas Solicitações</h2>
     <input type="text" id="input" placeholder="Filtrar">
-    <table border="1">
+    <table border="1" id="minhaTabela">
         <thead>
             <tr>
+                <th>n_solicitacao(id)</th>
                 <th>solicitante</th>
                 <th>descricao</th>
                 <th>data</th>
@@ -24,6 +25,7 @@ Feed
         <tbody id="table">
             {% for solicitacao in solicitacoes %}
             <tr>
+                <td>{{solicitacao.id}}</td>
                 <td>{{solicitacao.usuario.nome}}</td>
                 <td>{{solicitacao.descricao}}</td>
                 <td>{{solicitacao.data.strftime('%d-%m-%Y')}}</td>
@@ -34,5 +36,5 @@ Feed
             {% endfor %}
         </tbody>
     </table>
-    <p id="contador"></p>
+    <button id="mostrarMais">Mostrar Mais</button>
 {% endblock %}

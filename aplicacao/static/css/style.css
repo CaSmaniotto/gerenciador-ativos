@@ -103,11 +103,6 @@ table a {
     text-decoration: none;
 }
 
-#ativoInput, #propInput {
-    margin: 10px;
-    padding: 6px 10px;
-}
-
 nav {
     justify-content: center;
     display: flex;
@@ -230,4 +225,49 @@ nav a:hover {
 .dark table {
     color: #fff;
     background-color: rgb(33,33,33);
+}
+
+/* design tabelas */
+
+h2 {
+    text-align: center;
+}
+
+#input {
+    padding: 6px 10px;
+    justify-content: center;
+    margin: 10px 20px;
+}
+
+table {
+    border: 1px solid #999999;
+    border-collapse: collapse;
+    font-size: 14px;
+    /* text-transform: capitalize; */
+}
+
+table tr {
+    height: 20px;
+}
+
+table th {
+    background-color: #4c54ad;
+    color: #fff;
+    padding: 10px 15px;
+    font-weight: 500;
+}
+
+table td {
+    background-color: #fff;
+    color: black;
+    padding: 5px 10px;
+    font-weight: 500;
+    border-bottom: 1px solid #656565;
+    overflow: auto;
+}
+
+table td a {
+    text-decoration: none;
+    color: #fff;
+    background-color: blue;
 }

@@ -10,16 +10,17 @@ Solicitações
 
 <h2>Solicitações Geradas</h2>
 <input type="text" id="input" placeholder="Filtrar">
-<table border="1">
+<table border="1" id="minhaTabela">
     <thead>
         <tr>
+            <th>n_solicitacao(id)</th>
             <th>cpf_solicitante</th>
             <th>nome_solicitante</th>
             <th>email_solicitante</th>
-            <th>proprietario</th>
             <th>ativo</th>
             <th>quantidade</th>
             <th>descricao</th>
+            <th>data_criacao</th>
             <th>status</th>
             <th>Opções</th>
         </tr>
@@ -27,6 +28,7 @@ Solicitações
     <tbody id="table">
         {% for solicitacao in solicitacoes %}
         <tr>    
+            <td>{{solicitacao.id}}</td>
             <td>{{solicitacao.usuario.cpf}}</td>
             <td>{{solicitacao.usuario.nome}}</td>
             <td>{{solicitacao.usuario.email}}</td>
@@ -40,5 +42,5 @@ Solicitações
     {% endfor %}
     </tbody>
 </table>
-
+<button id="mostrarMais">Mostrar Mais</button>
 {% endblock %}
