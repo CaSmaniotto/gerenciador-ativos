@@ -22,22 +22,22 @@ O projeto a seguir se trata de software para gerenciamento de estoque de ativos 
 
 ## Screenshots
 
-- [Página Inicial](telas/FireShot Capture 064 - Página Inicial - 127.0.0.1.png)
-- [Criar Conta](telas/FireShot Capture 065 - Registrar - 127.0.0.1.png)
-- [Solicitar Equipamento](telas/FireShot Capture 066 - Home - 127.0.0.1.png)
-- [Cadastrar Ativo](telas/FireShot Capture 067 - Cadastrar Ativo - 127.0.0.1.png)
-- [Cadastrar Proprietário](telas/FireShot Capture 068 - Cadastrar Proprietário - 127.0.0.1.png)
-- [Estoque](telas/FireShot Capture 070 - Estoque - 127.0.0.1.png)
-- [Editar Ativo](telas/FireShot Capture 071 - Edit - Ativo - 127.0.0.1.png)
-- [Gerar Transação](telas/FireShot Capture 072 - Adicionar Estoque - 127.0.0.1.png)
-- [Proprietários](telas/FireShot Capture 073 - Proprietários - 127.0.0.1.png)
-- [Minhas Solicitações](telas/FireShot Capture 074 - Feed - 127.0.0.1.png)
-- [Todas Solicitações](telas/FireShot Capture 075 - Solicitações - 127.0.0.1.png)
-- [Todas Transações](telas/FireShot Capture 076 - Transações - 127.0.0.1.png)
-- [Dashboard](telas/FireShot Capture 077 - Dashboard - 127.0.0.1.png)
-- [Dark Mode](telas/FireShot Capture 080 - Home - 127.0.0.1.png)
-- [Aumentar Fonte](telas/FireShot Capture 107 - Home - Aumentar Fonte.png)
-- [Interface Admin](telas/FireShot Capture 108 - Ativos - Painel de Controle.png)
+- [Página Inicial](telas/Página-Inicial.png)
+- [Criar Conta](telas/Registrar.png)
+- [Solicitar Equipamento](telas/Home.png)
+- [Cadastrar Ativo](telas/Cadastrar-Ativo.png)
+- [Cadastrar Proprietário](telas/Cadastrar-Proprietario.png)
+- [Estoque](telas/Estoque.png)
+- [Editar Ativo](telas/Editar-Ativo.png)
+- [Gerar Transação](telas/Gerar-Transação.png)
+- [Proprietários](telas/Proprietarios.png)
+- [Minhas Solicitações](telas/Minhas-Solicitacoes.png)
+- [Todas Solicitações](telas/Todas-Solicitacoes.png)
+- [Todas Transações](telas/Todas-Transacoes.png)
+- [Dashboard](telas/Dashboard.png)
+- [Dark Mode](telas/Dark-Mode.png)
+- [Aumentar Fonte](telas/Aumentar-Fonte.png)
+- [Interface Admin](telas/Interface-Admin2.png)
 
 ## Instalação
 
