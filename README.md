@@ -22,7 +22,7 @@ O projeto a seguir se trata de software para gerenciamento de estoque de ativos 
 
 ## Screenshots
 
-- [Página Inicial](telas/FireShot_Capture064-Página_Inicial-127.0.0.1.png)
+- [Página Inicial](telas/FireShot Capture 064 - Página Inicial - 127.0.0.1.png)
 - [Criar Conta](telas/FireShot Capture 065 - Registrar - 127.0.0.1.png)
 - [Solicitar Equipamento](telas/FireShot Capture 066 - Home - 127.0.0.1.png)
 - [Cadastrar Ativo](telas/FireShot Capture 067 - Cadastrar Ativo - 127.0.0.1.png)
