@@ -10,14 +10,8 @@ $(document).ready(function(){
 
 const changeSize = () => {
     const elements = document.querySelectorAll('*');
-    // console.log(this)
 
     elements.forEach(element => {
-        // const computedStyle = window.getComputedStyle(element);
-        // const fontSize = parseFloat(computedStyle.fontSize);
-
-        // element.style.fontSize = fontSize * 1.1 + 'px';
-        // console.log(element.style.fontSize)
         element.classList.toggle('changeFont');
     });
 
@@ -25,16 +19,6 @@ const changeSize = () => {
     const isFontChanged = elements[0].classList.contains('changeFont');
     localStorage.setItem('fontChanged', isFontChanged);
 }
-
-// $(document).ready(function(){
-//     $('#btnContraste').click(function(){
-//         var element = document.body;
-//         element.classList.toggle("dark"); 
-        
-//         const darkMode = element[0].classList.contains('changeFont');
-//         localStorage.setItem('darkMode', darkMode);
-//     });
-// });   
 
 function toggleDarkMode() {
     var element = document.body;
@@ -70,11 +54,6 @@ setTimeout(function(){
     document.getElementById("error").style.opacity='0';
 }, 1000);
 
-//fechar alerta
-// function Fechar(){
-//     document.getElementById("alerta").style.visibility = "hidden";
-// }
-
 document.addEventListener("DOMContentLoaded", function () {
     var tabela = document.getElementById("minhaTabela");
     var mostrarMaisBotao = document.getElementById("mostrarMais");
@@ -95,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
         for (var i = linhasVisiveis; i < linhasVisiveis + 20 && i < linhas.length; i++) {
             linhas[i].style.display = "table-row";
         }
-      linhasVisiveis += 20; // Aumente este valor para mostrar mais ou menos linhas a cada clique
+        linhasVisiveis += 20; // Aumente este valor para mostrar mais ou menos linhas a cada clique
         if (linhasVisiveis >= linhas.length) {
             mostrarMaisBotao.style.display = "none"; // Oculta o botão quando todas as linhas estiverem visíveis
         }

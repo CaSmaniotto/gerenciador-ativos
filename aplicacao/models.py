@@ -9,7 +9,6 @@ from flask import abort
 def load_user(id_usuario):
     return Usuario.query.filter_by(id=int(id_usuario)).first()
 
-# modelos database
 class Usuario(database.Model, UserMixin):
     id = database.Column(database.Integer, primary_key=True)
     cpf = database.Column(database.String(11), nullable=False, unique=True)
@@ -84,8 +83,8 @@ class ControlUsuario(ModelView):
         return "acess denied!"
 
     form_choices = {
-        'permissao': [ (0,0), 
-                    (1,1)]
+        'permissao': [ (1,"Usuário"), 
+                    (2, "Admin")]
     }
     column_list = ['nome', 'cpf', 'email', 'solicitacoes']
     column_filters = ['cpf', 'email', 'solicitacoes']
@@ -189,6 +188,3 @@ admin.add_view(ControlSolicitacao(Solicitacao, database.session, name='Solicitac
 admin.add_view(ControlTransacaoEstoque(TransacaoEstoque, database.session, name='TransacoesEstoque'))
 admin.add_link(MenuLink(name='Voltar', url='/feed'))
 admin.add_link(MenuLink(name='Sair', url='/logout'))
-
-# manager.add_link(MenuLink(name='Voltar', url='/feed'))
-# manager.add_link(MenuLink(name='Sair', url='/logout'))

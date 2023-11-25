@@ -3,8 +3,6 @@ from aplicacao import app, database, bcrypt
 from aplicacao.models import Usuario, Ativo, Proprietario, TransacaoEstoque, Solicitacao
 from flask_login import login_required, login_user, logout_user, current_user
 from aplicacao.forms import FormLogin, FormCriarConta, FormAtivos, FormProprietario, FormTransacaoEstoque, FormSolicitacao
-from sqlalchemy import asc
-from sqlalchemy.sql import func
 from aplicacao.utils import sendgrid_mail
 from collections import defaultdict
 
@@ -53,8 +51,8 @@ def registrar():
         <p>Olá {form.nome.data}, sua conta foi criada com sucesso!<p>
         <br> Caso não tenha sido você, entre em contato conosco respondendo a este email!
         """
-        copia = 'hopidi1857@recutv.com' # suposto email do departamento de ti
-        sendgrid_mail(form.email.data, titulo, mensagem, copia)
+
+        sendgrid_mail(form.email.data, titulo, mensagem)
 
         return redirect('/')
 
@@ -81,14 +79,13 @@ def home():
 
         titulo = "Solicitação Gerada!"
         mensagem = f"""
-        <p>Olá {current_user.nome}!</p>
         <p>Solicitação gerada com sucesso</p>
         <p>Número: {solicitacao.id}</p>
         <p>Solicitante: {current_user.nome}</p>
         <p>Status: {solicitacao.status}</p>
         """
-        copia = 'hopidi1857@recutv.com' # suposto email do departamento de ti
-        sendgrid_mail(current_user.email, titulo, mensagem, copia)
+
+        sendgrid_mail(current_user.email, titulo, mensagem)
 
         return redirect(url_for("feed"))
 
@@ -100,9 +97,6 @@ def ativo():
     if current_user.permissao < 2:
         return abort(403)
     form = FormAtivos()
-
-    # proprietarios = Proprietario.query.all()
-    # form.proprietario.choices = [(int(prop.id), prop.nome) for prop in proprietarios]
 
     if form.validate_on_submit():
         ativo = Ativo.query.filter_by(nome=form.nome.data).first()
@@ -165,44 +159,52 @@ def proprietarios():
     proprietarios = Proprietario.query.all()
     return render_template("proprietarios.html", proprietarios=proprietarios)
 
+item_actions = {
+    "ativo": {
+        "edit": "edit_ativo",
+        "delete": "delete_ativo",
+    },
+    "proprietario": {
+        "edit": "edit_proprietario",
+        "delete": "delete_proprietario",
+    },
+    "solicitacao": {
+        "finish": "finish_solicitacao",
+    },
+}
+
+@app.route("/finish_solicitacao")
+@login_required
+def finish_solicitacao():
+    solicitacao = Solicitacao.query.filter_by(id=session["item_id"]).first()
+    if solicitacao.status == "Finalizado":
+        return redirect(url_for("solicitacoes"))
+
+    solicitacao.status = "Finalizado"
+    database.session.commit()
+
+    titulo = "Solicitação Finalizada"
+    mensagem = f"""
+    <p>Solicitante: {solicitacao.usuario.nome}</p>
+    <p>Número: {solicitacao.id}</p>
+    <p>Status: {solicitacao.status}</p>
+    """
+
+    sendgrid_mail(solicitacao.usuario.email, titulo, mensagem)
+
+    return redirect(url_for("solicitacoes"))
+
 @app.route("/get_item/<string:item_type>/<string:action>/<int:item_id>")
 @login_required
 def get_item(item_type, action, item_id):
     if current_user.permissao < 2:
         return abort(403)
-    
-    session['item_id'] = item_id
-    
-    if item_type == 'ativo':
-        if action == 'edit':
-            return redirect(url_for("edit_ativo"))
-        elif action == 'delete':
-            return redirect(url_for("delete_ativo"))
-    elif item_type == 'proprietario':
-        if action == 'edit':
-            return redirect(url_for("edit_proprietario"))
-        elif action == 'delete':
-            return redirect(url_for("delete_proprietario"))
-    elif item_type == 'solicitacao':
-        if action == 'finish':
-            solicitacao = Solicitacao.query.filter_by(id=item_id).first()
-            if solicitacao.status == 'Finalizado':
-                return redirect(url_for("solicitacoes"))
-            
-            solicitacao.status = 'Finalizado'
-            database.session.commit()
 
-            titulo = 'Solicitação Finalizada'
-            mensagem = f"""
-            <p>Solicitante: {solicitacao.usuario.nome}</p>
-            <p>Número: {solicitacao.id}</p>
-            <p>Status: {solicitacao.status}</p>
-            """
-            print(solicitacao.usuario.nome)
-            copia = 'hopidi1857@recutv.com' # suposto email do departamento de ti
-            sendgrid_mail(solicitacao.usuario.email, titulo, mensagem, copia)
+    session["item_id"] = item_id
 
-            return redirect(url_for("solicitacoes"))
+    if item_type in item_actions:
+        if action in item_actions[item_type]:
+            return redirect(url_for(item_actions[item_type][action]))
     else:
         return redirect("estoque")
 
@@ -217,18 +219,12 @@ def edit_ativo():
 
     form_edit = FormAtivos(obj=ativo)
 
-    # Definindo os campos do form
-    # form_edit.proprietario.choices = [(prop.id, prop.nome) for prop in Proprietario.query.all()]
-
     if form_edit.validate_on_submit():
         form_edit.populate_obj(ativo)
 
         database.session.commit()
         flash("Editado com sucesso!")
         return redirect('/estoque')
-    # elif request.method == 'GET':
-    #     form_edit.proprietario.data = str(ativo.proprietario.id)
-        # return render_template("edit_ativo.html", form=form_edit) 
     return render_template("edit_ativo.html", form=form_edit) 
 
 @app.route("/delete_ativo")
@@ -335,8 +331,7 @@ def adicionar_estoque():
     form = FormTransacaoEstoque()
 
     proprietarios = Proprietario.query.all()
-    # form.proprietario.choices = [('Estoque (Apenas Entradas)', 'Estoque (Apenas Entradas)')]
-    # isso iria dar erro na hora de listar
+
     form.proprietario.choices = [(int(prop.id), prop.nome) for prop in proprietarios]
 
     ativos = Ativo.query.all()
@@ -393,7 +388,6 @@ def transacoes():
 @app.route("/logout")
 @login_required
 def logout():
-    # session.pop('usuario', None)
     session.clear()
     logout_user()
     flash("Saiu com sucesso!")

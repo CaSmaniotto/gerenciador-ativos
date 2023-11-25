@@ -3,13 +3,14 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from aplicacao import sg
 
-def sendgrid_mail(email_para, mensagem, titulo, copia):
+def sendgrid_mail(email_para, mensagem, titulo):
     message = Mail(
-        from_email = 'smaniottocaetano@gmail.com',
+        from_email = 'sender@email.com', # remetente -> sender configurado no site da api (sendgrid)
         to_emails = email_para,
         subject = mensagem,
         html_content = titulo)
     
+    copia = "itsupport@email.com" # suposto email do departamento de ti
     message.add_cc(copia)
     
     try:
