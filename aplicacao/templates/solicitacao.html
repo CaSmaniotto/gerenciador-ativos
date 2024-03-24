@@ -2,35 +2,37 @@
 
 {% block title %}
 
-Home
+Solicitação
 
 {% endblock %}
 
 {% block body %}
 
+<h1>Olá {{current_user}}</h1>
+
 <ul>
     {% for field_errors in form.errors.values() %}
         {% for error in field_errors %}
-            <li id="error">{{ error }}</li>
+            <li>{{ error }}</li>
         {% endfor %}
     {% endfor %}
 </ul>
 
 <form method="POST">
     {{ form.csrf_token }}
-    <h3>Solicitar Equipamento</h3>
+    <h3>Gerar Solicitação</h3>
     
     <div class="campo">
-        {{ form.ativo.label }}
-        {{ form.ativo}}
-    </div>
-    <div class="campo">
         {{ form.descricao.label }}
-        {{ form.descricao(placeholder="Descrição...", rows=4) }}
+        {{ form.descricao(placeholder="Breve descrição...")}}
     </div>
     <div class="campo">
         {{ form.quantidade.label }}
-        {{ form.quantidade(placeholder="Quantidade...") }}
+        {{ form.quantidade(placeholder="Digite a quantia...") }}
+    </div>
+    <div class="campo">
+        {{ form.equipamento.label }}
+        {{ form.equipamento }}
     </div>
     <div class="btn">
         {{ form.botao_confirmacao }}

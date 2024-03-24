@@ -1,13 +1,160 @@
-{% extends "base.html" %}
-
+{% extends 'base_perfil.html' %}
 {% block title %}
 
-Gerenciador
+Dashboard
 
-{% endblock%}
+{% endblock %}
 
 {% block body %}
 
 
+<div style="display: flex;">
+    <div style="position: relative; height:50vh; width:80vw">
+        <canvas id="status"></canvas>
+    </div>
+    
+    <div style="position: relative; height:50vh; width:60vw">
+        <canvas id="total"></canvas>
+    </div>
+
+    <div style="position: relative; height:50vh; width:60vw">
+        <canvas id="ativos"></canvas>
+    </div>
+
+    <div style="position: relative; height:50vh; width:60vw">
+        <canvas id="solicitacoes"></canvas>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx_status = document.getElementById('status');
+
+    new Chart(ctx_status, {
+        type: 'pie',
+        data: {
+        labels: {{labels|safe}},
+        datasets: [{
+            label: 'Quantidade em estoque',
+            data: {{values}},
+            backgroundColor: [
+                'rgb(21,96,122)',
+                'rgb(206,205,205)',
+                // 'rgb(243,188,0)',
+                'rgb(29,129,162)'
+            ]
+        }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Ativos em estoque p/ Categoria'
+                }
+            }
+        }
+    });
+
+    const ctx_total = document.getElementById('total');
+
+    new Chart(ctx_total, {
+        type: 'bar',
+        data: {
+        labels: {{total_labels|safe}},
+        datasets: [{
+            label: 'Total p/ Departamento',
+            data: {{total_values}},
+            backgroundColor: [
+                'rgb(1, 80, 112)',
+                'rgb(0,117,164)',
+                'rgb(0,150,168)',
+                'rgb(0,175,129)',
+                'rgb(126,191,63)',
+                'rgb(243,188,0)'
+            ],
+            borderWidth: 3
+            }],
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Total de Ativos p/ Departamento (Apenas Saídas)'
+                }
+            },
+            // indexAxis: 'y',
+            scales: {
+                y: {
+                    ticks: {
+                        stepSize: 1 // Incremento de 1 entre os valores
+                        }
+                    }
+                }
+            }
+    });
+
+    const ctx_ativos = document.getElementById('ativos');
+
+    new Chart(ctx_ativos, {
+        type: 'bar',
+        data: {
+        labels: {{estoque_labels|safe}},
+        datasets: [{
+            backgroundColor: ['rgb(30,66,122)'],
+            label: 'Total',
+            data: {{estoque_values}},
+            borderWidth: 3
+            }],
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Total de Ativos no Estoque'
+                }
+            },
+            // indexAxis: 'y',
+            scales: {
+                y: {
+                    ticks: {
+                        stepSize: 1 // Incremento de 1 entre os valores
+                        }
+                    }
+                }
+            }
+    });
+
+    const ctx_solicitacoes = document.getElementById('solicitacoes');
+
+    new Chart(ctx_solicitacoes, {
+        type: 'bar',
+        data: {
+        labels: {{solicitacoes_labels|safe}},
+        datasets: [{
+            backgroundColor: ['rgb(30,66,122)'],
+            label: 'Total',
+            data: {{solicitacoes_values}},
+            borderWidth: 3
+            }],
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Solicitações p/ Status'
+                }
+            },
+            // indexAxis: 'y',
+            scales: {
+                y: {
+                    ticks: {
+                        stepSize: 1 // Incremento de 1 entre os valores
+                        }
+                    }
+                }
+            }
+    });
+
+</script>
 
 {% endblock %}
