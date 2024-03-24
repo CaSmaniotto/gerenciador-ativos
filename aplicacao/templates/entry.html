@@ -2,7 +2,7 @@
 
 {% block title %}
 
-Home
+Entrys
 
 {% endblock %}
 
@@ -18,19 +18,19 @@ Home
 
 <form method="POST">
     {{ form.csrf_token }}
-    <h3>Solicitar Equipamento</h3>
+    <h3>Adicionar Entrada/Saída</h3>
     
     <div class="campo">
-        {{ form.ativo.label }}
-        {{ form.ativo}}
+        {{ form.equipamento.label }}
+        {{ form.equipamento }}
     </div>
     <div class="campo">
-        {{ form.descricao.label }}
-        {{ form.descricao(placeholder="Descrição...", rows=4) }}
+        {{ form.tipo.label }}
+        {{ form.tipo }}
     </div>
     <div class="campo">
         {{ form.quantidade.label }}
-        {{ form.quantidade(placeholder="Quantidade...") }}
+        {{ form.quantidade(placeholder="Informe a quantia...") }}
     </div>
     <div class="btn">
         {{ form.botao_confirmacao }}

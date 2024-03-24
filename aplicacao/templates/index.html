@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}
+
+Página Inicial
+
+{% endblock %}
+
+{% block body %}
+
+<form method="POST">
+    {{ form.csrf_token }}
+    <h3>Login</h3>
+    
+    <div class="campo">
+        {{ form.cpf.label }}
+        {{ form.cpf(placeholder="Digite seu cpf...")}}
+    </div>
+    <div class="campo">
+        {{ form.senha.label }}
+        {{ form.senha(placeholder="Digite sua senha...") }}
+    </div>
+    <div class="remember">
+        {{ form.remember }} 
+        {{ form.remember.label }}
+    </div>
+    <div class="btn">
+        {{ form.botao_confirmacao }}
+        <a class="btn-criar" href="/registrar">Crie sua conta aqui!</a>
+    </div>
+</form>
+
+{% endblock %}

@@ -2,7 +2,7 @@
 
 {% block title %}
 
-Home
+Adicionar Estoque
 
 {% endblock %}
 
@@ -16,13 +16,14 @@ Home
     {% endfor %}
 </ul>
 
+
 <form method="POST">
     {{ form.csrf_token }}
-    <h3>Solicitar Equipamento</h3>
+    <h3>Gerar Entrada/Saída de Estoque</h3>
     
     <div class="campo">
-        {{ form.ativo.label }}
-        {{ form.ativo}}
+        {{ form.tipo.label }}
+        {{ form.tipo}}
     </div>
     <div class="campo">
         {{ form.descricao.label }}
@@ -31,6 +32,14 @@ Home
     <div class="campo">
         {{ form.quantidade.label }}
         {{ form.quantidade(placeholder="Quantidade...") }}
+    </div>
+    <div class="campo">
+        {{ form.ativo.label }}
+        {{ form.ativo }}
+    </div>
+    <div class="campo">
+        {{ form.proprietario.label }}
+        {{ form.proprietario }}
     </div>
     <div class="btn">
         {{ form.botao_confirmacao }}

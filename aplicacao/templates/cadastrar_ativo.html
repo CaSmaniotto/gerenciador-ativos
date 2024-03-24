@@ -2,7 +2,7 @@
 
 {% block title %}
 
-Home
+Cadastrar Ativo
 
 {% endblock %}
 
@@ -16,21 +16,34 @@ Home
     {% endfor %}
 </ul>
 
+
 <form method="POST">
     {{ form.csrf_token }}
-    <h3>Solicitar Equipamento</h3>
+    <h3>Cadastrar Novo Ativo</h3>
     
     <div class="campo">
-        {{ form.ativo.label }}
-        {{ form.ativo}}
+        {{ form.nome.label }}
+        {{ form.nome(placeholder="Digite o nome do produto...")}}
+    </div>
+    <div class="campo">
+        {{ form.tipo.label }}
+        {{ form.tipo }}
     </div>
     <div class="campo">
         {{ form.descricao.label }}
         {{ form.descricao(placeholder="Descrição...", rows=4) }}
     </div>
     <div class="campo">
-        {{ form.quantidade.label }}
-        {{ form.quantidade(placeholder="Quantidade...") }}
+        {{ form.data_aquisicao.label }}
+        {{ form.data_aquisicao }}
+    </div>
+    <div class="campo">
+        {{ form.data_garantia.label }}
+        {{ form.data_garantia }}
+    </div>
+    <div class="campo">
+        {{ form.quantidade_estoque.label }}
+        {{ form.quantidade_estoque(placeholder="Quantidade...") }}
     </div>
     <div class="btn">
         {{ form.botao_confirmacao }}
